@@ -14,7 +14,7 @@ class SongDetail extends Component {
         <div>Loading...</div>
       )
     }
-    console.log(this.props.data);
+
     return (
       <div>
         <Link to="/" >Back</Link>

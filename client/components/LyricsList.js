@@ -4,10 +4,23 @@ import { graphql } from 'react-apollo';
 import { Link, hashHistory } from 'react-router';
 import query from '../queries/fetchSongs.js';
 import deleteSong from "../queries/deleteSong.js";
+import likeLyric from "../queries/likeLyric.js";
 
 class LyricsList extends Component {
-  onLike(id) {
-    console.log(id);
+  onLike(id, likes = 0) {
+    this.props.mutate({
+      variables: {
+        id
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        likeLyric: {
+          id,
+          __typename: 'LyricType',
+          likes: likes + 1,
+        }
+      }
+    })
   }
 
   render() {
@@ -22,12 +35,15 @@ class LyricsList extends Component {
                 key={item.id}
               >
                 {item.content}
-                <i
-                  onClick={() => this.onLike(item.id)}
-                  className="material-icons"
-                >
-                  thumb_up
-                </i>
+                <div className="vote-box">
+                  <i
+                    onClick={() => this.onLike(item.id, item.likes)}
+                    className="material-icons"
+                    >
+                    thumb_up
+                  </i>
+                  {item.likes || 0}
+                </div>
               </li>
             )
           })}
@@ -40,4 +56,4 @@ class LyricsList extends Component {
 
 
 
-export default LyricsList;
+export default graphql(likeLyric)(LyricsList);
